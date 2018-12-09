@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "pages/waterfall/waterfall",
+    "pages/swiper/swiper",
+    "pages/index/swiper"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  }
+}
