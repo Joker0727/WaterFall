@@ -1,8 +1,7 @@
 {
   "pages": [
     "pages/waterfall/waterfall",
-    "pages/swiper/swiper",
-    "pages/index/swiper"
+    "pages/index/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

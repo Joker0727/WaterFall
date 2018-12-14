@@ -37,12 +37,11 @@ Page({
     let imgWidth = this.data.imgWidth; //图片设置的宽度
     let scale = imgWidth / oImgW; //比例计算
     let imgHeight = oImgH * scale; //自适应高度
-
     let images = this.data.images;
     let imageObj = null;
     for (let i = 0; i < images.length; i++) {
       let img = images[i];
-      if (img.id === imageId) {
+      if (img.Id == imageId) {
         imageObj = img;
         break;
       }
@@ -81,77 +80,80 @@ Page({
     wx.showToast({
       title: '拼命加载中...',
       icon: 'loading',
-      duration: 1000
+      duration: 2000
     })
-    let jsonArr = [{
-        id: "1",
-        src: "http://54188.xyz/images/1.jpg",
-        height: 0
-      },
-      {
-        id: "2",
-        src: "http://54188.xyz/images/2.jpg",
-        height: 0
-      },
-      {
-        id: "3",
-        src: "http://54188.xyz/images/3.jpg",
-        height: 0
-      },
-      {
-        id: "4",
-        src: "http://54188.xyz/images/4.jpg",
-        height: 0
-      },
-      {
-        id: "5",
-        src: "http://54188.xyz/images/5.jpg",
-        height: 0
-      },
-      {
-        id: "6",
-        src: "http://54188.xyz/images/6.jpg",
-        height: 0
-      },
-      {
-        id: "7",
-        src: "http://54188.xyz/images/7.jpg",
-        height: 0
-      },
-      {
-        id: "8",
-        src: "http://54188.xyz/images/8.jpg",
-        height: 0
+    wx.request({
+      method: "POST",
+      url: "https://54188.xyz/api/imagespiderapi/getcatalog?page=" + this.data.page + "&count=10",
+      success: function(res) {
+        wx.hideToast();
+        if (res.statusCode == 200) {
+          if (res.data.length > 0) {
+            let tempImages = that.data.images;
+            tempImages.push(...res.data);
+            that.setData({
+              loadingCount: res.data.length,
+              images: tempImages,
+              page: that.data.page + 1
+            });
+          } else {
+            wx.showToast({
+              title: '暂无更多...',
+              icon: 'info',
+              duration: 500
+            });
+          }
+        } else {
+          wx.showToast({
+            title: '加载失败',
+            icon: 'warn',
+            duration: 500
+          });
+        }
       }
-    ];
-    let tempImages = that.data.images;
-    tempImages.push(...jsonArr);
-    that.setData({
-      images: tempImages
-    });
-
-    //wx.hideToast();
-    // wx.request({
-    //   url: 'https://api.getweapp.com/vendor/tngou/tnfs/api/list?page=' + this.data.page,
-    //   success: function (res) {
-    //     wx.hideToast()
-    //     that.setData({
-    //       loadingCount: res.data.tngou.length,
-    //       images: res.data.tngou,
-    //       page: that.data.page + 1
-    //     })
-    //   }
-    // })
+    })
 
   },
+
   previewImage: (e) => {
-    let imgUrl =e.currentTarget.dataset.src;
-    wx.previewImage({
-      current: imgUrl,
-      urls: [imgUrl],
-      success: function(res) {},
-      fail: function(res) {},
-      complete: function(res) {},
-    })
+    let catalogid = e.currentTarget.dataset.catalogid;
+    let imgUrl = e.currentTarget.dataset.src;
+    wx.showToast({
+      title: '拼命加载中...',
+      icon: 'loading',
+      duration: 2000
+    });
+    wx.request({
+      method: "POST",
+      url: "https://54188.xyz/api/imagespiderapi/getimage?catalogId=" + catalogid + "",
+      success: function (res) {
+        wx.hideToast();
+        if (res.statusCode == 200) {
+          if (res.data.length > 0) {
+            let imagesArr  = res.data;
+            let imagesUrlArr = [];
+            for (let i = 0; i < imagesArr.length;i++){
+              imagesUrlArr.push(imagesArr[i].NewUrl);
+            }
+            wx.previewImage({
+              current: imagesUrlArr[0],
+              urls: imagesUrlArr,
+            });
+          } else {
+            wx.showToast({
+              title: '暂无更多...',
+              icon: 'info',
+              duration: 1000
+            });
+          }
+        } else {
+          wx.showToast({
+            title: '加载失败',
+            icon: 'warn',
+            duration: 1000
+          });
+        }
+      }
+    });   
   }
 })
