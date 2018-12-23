@@ -1,6 +1,7 @@
+var util = require('../../utils/util.js');
 let col1H = 0;
 let col2H = 0;
-
+let isCanLoad = true;
 Page({
   data: {
     scrollH: 0,
@@ -70,90 +71,71 @@ Page({
 
     if (!loadingCount) {
       data.images = [];
+      if (!isCanLoad)
+        isCanLoad = true;
     }
 
     this.setData(data);
   },
 
   loadImages: function() {
-    var that = this;
-    wx.showToast({
-      title: '拼命加载中...',
-      icon: 'loading',
-      duration: 2000
-    })
+    if (!isCanLoad)
+      return;
+    var that = this; 
+    util.showLoading("拼命加载中...");
+    isCanLoad = false;
     wx.request({
       method: "POST",
       url: "https://54188.xyz/api/imagespiderapi/getcatalog?page=" + this.data.page + "&count=10",
       success: function(res) {
-        wx.hideToast();
-        if (res.statusCode == 200) {
-          if (res.data.length > 0) {
-            let tempImages = that.data.images;
-            tempImages.push(...res.data);
-            that.setData({
-              loadingCount: res.data.length,
-              images: tempImages,
-              page: that.data.page + 1
-            });
-          } else {
-            wx.showToast({
-              title: '暂无更多...',
-              icon: 'info',
-              duration: 500
-            });
-          }
-        } else {
-          wx.showToast({
-            title: '加载失败',
-            icon: 'warn',
-            duration: 500
+        if (res.data.length > 0) {
+          let tempImages = that.data.images;
+          tempImages.push(...res.data);
+          that.setData({
+            loadingCount: res.data.length,
+            images: tempImages,
+            page: that.data.page + 1
           });
+          wx.hideLoading();
+        } else {
+          util.showToast("暂无更多!", "warn");
         }
+      },
+      fail:function(res){
+        util.showToast("加载失败!","warn");
       }
-    })
-
+    });
   },
 
   previewImage: (e) => {
     let catalogid = e.currentTarget.dataset.catalogid;
     let imgUrl = e.currentTarget.dataset.src;
-    wx.showToast({
-      title: '拼命加载中...',
-      icon: 'loading',
-      duration: 2000
-    });
+    util.showLoading("玩命加载中...");
     wx.request({
       method: "POST",
       url: "https://54188.xyz/api/imagespiderapi/getimage?catalogId=" + catalogid + "",
-      success: function (res) {
-        wx.hideToast();
-        if (res.statusCode == 200) {
-          if (res.data.length > 0) {
-            let imagesArr  = res.data;
-            let imagesUrlArr = [];
-            for (let i = 0; i < imagesArr.length;i++){
-              imagesUrlArr.push(imagesArr[i].NewUrl);
-            }
-            wx.previewImage({
-              current: imagesUrlArr[0],
-              urls: imagesUrlArr,
-            });
-          } else {
-            wx.showToast({
-              title: '暂无更多...',
-              icon: 'info',
-              duration: 1000
-            });
+      success: function(res) {
+        if (res.data.length > 0) {
+          let imagesArr = res.data;
+          let imagesUrlArr = [];
+          for (let i = 0; i < imagesArr.length; i++) {
+            imagesUrlArr.push(imagesArr[i].NewUrl);
           }
-        } else {
-          wx.showToast({
-            title: '加载失败',
-            icon: 'warn',
-            duration: 1000
+          wx.previewImage({
+            current: imagesUrlArr[0],
+            urls: imagesUrlArr,
+            success:function(){
+              wx.hideLoading();
+            }
           });
+        } else {
+          util.showToast("暂无更多!","warn");
         }
+      },
+      fail:(res)=>{
+        util.showToast("加载失败!", "warn");
       }
-    });   
-  }
+    });
+  },
+
 })

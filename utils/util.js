@@ -14,6 +14,38 @@ const formatNumber = n => {
   return n[1] ? n : '0' + n
 }
 
+const showLoading=(text="正在加载...")=>{
+  wx.showLoading({
+    title: text,
+    mask: true
+  })
+}
+
+const showToast = (text, ic ="info",time=2000) => {
+  wx.showToast({
+    title: text,
+    icon: ic,
+    duration: time
+  })
+}
+
+const showModal = (text) => {
+  wx.showModal({
+    title: '提示',
+    content: text,
+    success(res) {
+      if (res.confirm) {
+        console.log('用户点击确定')
+      } else if (res.cancel) {
+        console.log('用户点击取消')
+      }
+    }
+  });
+}
+
 module.exports = {
-  formatTime: formatTime
+  formatTime: formatTime,
+  showLoading: showLoading,
+  showToast: showToast,
+  showModal: showModal
 }
