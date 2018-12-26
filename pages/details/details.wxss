@@ -1,0 +1,23 @@
+/* 单个图片容器的样式 */
+
+.img_item {
+  width: 48%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.left {
+  margin-left: 1%;
+}
+
+.right {
+  margin-left: 1%;
+}
+
+.template_image {
+  /* border: 1px red solid; */
+}
+
+.template {
+  /* border: 1px rgb(221, 217, 217) solid; */
+}

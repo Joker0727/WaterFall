@@ -2,6 +2,7 @@ var util = require('../../utils/util.js');
 let col1H = 0;
 let col2H = 0;
 let isCanLoad = true;
+let imageUrl= [];
 Page({
   data: {
     scrollH: 0,
@@ -13,7 +14,7 @@ Page({
     page: 1
   },
 
-  onLoad: function() {
+  onLoad: function(options) {
     wx.getSystemInfo({
       success: (res) => {
         let ww = res.windowWidth;
@@ -26,11 +27,16 @@ Page({
           imgWidth: imgWidth
         });
 
-        this.loadImages();
+        this.loadImages(options.catalogid);
       }
     })
   },
-
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+    imageUrl = [];
+  },
   onImageLoad: function(e) {
     let imageId = e.currentTarget.id;
     let oImgW = e.detail.width; //图片原始宽度
@@ -44,12 +50,13 @@ Page({
       let img = images[i];
       if (img.Id == imageId) {
         imageObj = img;
+        imageUrl.push(imageObj.NewUrl);
         break;
       }
     }
 
     if (imageObj)
-      imageObj.height = imgHeight;
+      imageObj.Height = imgHeight;
 
     let loadingCount = this.data.loadingCount - 1;
     let col1 = this.data.col1;
@@ -77,15 +84,15 @@ Page({
     this.setData(data);
   },
 
-  loadImages: function() {
+  loadImages: function(catalogid) {
     if (!isCanLoad)
       return;
-    var that = this; 
+    var that = this;
     util.showLoading("拼命加载中...");
     isCanLoad = false;
     wx.request({
       method: "POST",
-      url: "https://54188.xyz/api/imagespiderapi/getcatalog?page=" + this.data.page + "&count=10",
+      url: "https://54188.xyz/api/imagespiderapi/getimage?catalogId=" + catalogid + "",
       success: function(res) {
         if (res.data.length > 0) {
           let tempImages = that.data.images;
@@ -100,19 +107,19 @@ Page({
           util.showToast("暂无更多!", "warn");
         }
       },
-      fail:function(res){
-        util.showToast("加载失败!","warn");
+      fail: function(res) {
+        util.showToast("加载失败!", "warn");
       }
     });
   },
 
-  toDetails: (e) => {
-    let catalogid = e.currentTarget.dataset.catalogid;
+  previewImage: (e) => {
+    let imageid = e.currentTarget.dataset.imageid;
     let imgUrl = e.currentTarget.dataset.src;
-    util.showLoading("玩命加载中...");
-    wx.navigateTo({
-      url: "../details/details?catalogid=" + catalogid+""
+    wx.previewImage({
+      current: imgUrl,
+      urls: imageUrl
     });
-    wx.hideLoading();
-  }
+  },
+
 })

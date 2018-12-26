@@ -1,8 +1,9 @@
 {
   "pages": [
     "pages/home/home",
+    "pages/details/details",
     "pages/classify/classify",
-    "pages/personal/personal"
+    "pages/personal/personal"   
   ],
   "window": {
     "backgroundTextStyle": "light",

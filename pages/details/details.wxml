@@ -1,8 +1,8 @@
 <view style="display:none">
-  <image wx:for="{{images}}" wx:key="Id" id="{{item.Id}}" src="{{item.CoverUrl}}" bindload="onImageLoad"></image>
+  <image wx:for="{{images}}" wx:key="Id" id="{{item.Id}}" src="{{item.NewUrl}}" bindload="onImageLoad"></image>
 </view>
 
-<scroll-view scroll-y="true" style="height:{{scrollH}}px" bindscrolltolower="loadImages" lower-threshold="50">
+<scroll-view scroll-y="true" style="height:{{scrollH}}px">
   <view class="content" style="width:100%">
     <view class="img_item left">
       <view wx:for="{{col1}}" wx:key="Id">
@@ -19,9 +19,6 @@
 
 <template name="imageTemplate">
   <view class="template">
-    <image class="template_image" src="{{item.CoverUrl}}" data-catalogid="{{item.Id}}" data-src="{{item.CoverUrl}}" style="width:100%;height:{{item.height}}px" bindtap='toDetails'></image>
-    <view class="template_describe">
-     {{item.Describe}}
-    </view>
+    <image class="template_image" src="{{item.NewUrl}}" data-imageid="{{item.Id}}" data-src="{{item.NewUrl}}" style="width:100%;height:{{item.height}}px" bindtap='previewImage'></image>
   </view>
 </template>
