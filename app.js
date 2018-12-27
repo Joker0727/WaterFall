@@ -10,24 +10,24 @@ App({
     wx.login({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        // 获取用户信息
-        // wx.getSetting({
-        //   success: resInfo => {
-        //     if (resInfo.authSetting['scope.userInfo']) {
-        //       // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-        //       wx.getUserInfo({
-        //         success: function (resInfo) {
-        //           var app = getApp();
-        //           wx.request({
-        //             url: "https://54188.xyz/api/account/getwxvalidate",
-        //             data: {
-        //               code: res.code,
-        //               encryptedData: resInfo.encryptedData,
-        //               iv: resInfo.iv
-        //             },
-        //             method: 'GET',
-        //             success: function (res) {
-        //               console.log(res);
+        // 获取用户信息            url: "https://54188.xyz/api/account/getwxvalidate", 
+        wx.getSetting({
+          success: resInfo => {
+            if (resInfo.authSetting['scope.userInfo']) {
+              // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+              wx.getUserInfo({
+                success: function (resInfo) {
+                  var app = getApp();
+                  wx.request({
+                    url: "https://54188.xyz/api/account/getwxvalidate", 
+                    data: {
+                      code: res.code,
+                      encryptedData: resInfo.encryptedData,
+                      iv: resInfo.iv
+                    },
+                    method: 'GET',
+                    success: function (res) {
+                      console.log(res);
                       // if (res.data.Code == 0) {
                       //   //console.log(res.data.Data);
                       //   app.globalData.userInfo = res.data.Data
@@ -102,13 +102,13 @@ App({
                       // } else {
                       //   //console.log(res)
                       // }
-        //             },
-        //           })
-        //         }
-        //       })
-        //     }
-        //   }
-        // })
+                    },
+                  })
+                }
+              })
+            }
+          }
+        })
       }
     })
     // 获取用户信息
