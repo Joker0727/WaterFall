@@ -78,10 +78,9 @@ Page({
   },
 
   loadImages: function() {
-    if (!isCanLoad)
-      return;
-    var that = this; 
-    util.showLoading("拼命加载中...");
+    var that = this;
+    util.showToast("拼命加载中...", "loading");
+    if (!isCanLoad) return;
     isCanLoad = false;
     wx.request({
       method: "POST",
@@ -95,13 +94,13 @@ Page({
             images: tempImages,
             page: that.data.page + 1
           });
-          wx.hideLoading();
+          wx.hideToast();
         } else {
-          util.showToast("暂无更多!", "warn");
+          util.showToast("暂无更多!", "none");
         }
       },
-      fail:function(res){
-        util.showToast("加载失败!","warn");
+      fail: function(res) {
+        util.showToast("加载失败!", "none");
       }
     });
   },
@@ -111,7 +110,7 @@ Page({
     let imgUrl = e.currentTarget.dataset.src;
     util.showLoading("玩命加载中...");
     wx.navigateTo({
-      url: "../details/details?catalogid=" + catalogid+""
+      url: "../details/details?catalogid=" + catalogid + ""
     });
     wx.hideLoading();
   }

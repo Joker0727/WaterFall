@@ -2,7 +2,7 @@ var util = require('../../utils/util.js');
 let col1H = 0;
 let col2H = 0;
 let isCanLoad = true;
-let imageUrl= [];
+let imageUrl = [];
 Page({
   data: {
     scrollH: 0,
@@ -34,7 +34,7 @@ Page({
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {
+  onUnload: function() {
     imageUrl = [];
   },
   onImageLoad: function(e) {
@@ -85,14 +85,13 @@ Page({
   },
 
   loadImages: function(catalogid) {
-    if (!isCanLoad)
-      return;
     var that = this;
-    util.showLoading("拼命加载中...");
+    util.showToast("拼命加载中...", "loading");
+    if (!isCanLoad) return;
     isCanLoad = false;
     wx.request({
       method: "POST",
-      url: "https://54188.xyz/api/imagespiderapi/getimage?catalogId=" + catalogid + "",
+      url: "https://54188.xyz/api/imagespiderapi/getimage?catalogId=" + catalogid + "&page=" + this.data.page + "&count=10",
       success: function(res) {
         if (res.data.length > 0) {
           let tempImages = that.data.images;
@@ -102,13 +101,13 @@ Page({
             images: tempImages,
             page: that.data.page + 1
           });
-          wx.hideLoading();
+          wx.hideToast();
         } else {
-          util.showToast("暂无更多!", "warn");
+          util.showToast("暂无更多!", "none");
         }
       },
       fail: function(res) {
-        util.showToast("加载失败!", "warn");
+        util.showToast("加载失败!", "none");
       }
     });
   },

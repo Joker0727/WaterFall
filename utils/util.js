@@ -21,7 +21,7 @@ const showLoading=(text="正在加载...")=>{
   })
 }
 
-const showToast = (text, ic ="info",time=2000) => {
+const showToast = (text, ic ="success",time=2000) => {
   wx.showToast({
     title: text,
     icon: ic,
