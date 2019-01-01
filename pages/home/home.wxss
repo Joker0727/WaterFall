@@ -19,18 +19,46 @@
 }
 
 .template_describe {
-  display: block;
   width: 100%;
   text-indent: 2;
   font-size: 12px;
   color: rgb(168, 159, 159);
-  line-height: 12px;
+  line-height: 15px;
   margin-top: 0px;
   margin-bottom: 10px;
-  /* background-color: rgb(221, 217, 217); */
-  /* border: 1px red solid; */
+  /* background-color: rgb(221, 217, 217); *//* border: 1px red solid; */
 }
 
 .template {
   /* border: 1px rgb(221, 217, 217) solid; */
+}
+
+.describe_text {
+  display: inline-block;
+  margin-top: 0px;
+  /* border: 1px red solid; */
+}
+
+.icon-out {
+  display: flex;
+  margin-top: -10px;
+  color: rgb(168, 159, 159);
+  font-size: 12px;
+}
+
+.browse-view, .collection-view {
+  justify-content: space-between;
+  line-height: 10px;
+  margin-bottom: 10px;
+}
+
+.collection-view {
+  margin-left: 10px;
+}
+
+.browse, .collection {
+  width: 12px;
+  height: 10px;
+  margin-top: 2px;
+  /* border: 1px red solid; */
 }

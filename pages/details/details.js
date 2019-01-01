@@ -1,7 +1,7 @@
 var util = require('../../utils/util.js');
 let col1H = 0;
 let col2H = 0;
-let isCanLoad = true;
+let isDetailsCanLoad = true;
 let imageUrl = [];
 Page({
   data: {
@@ -11,7 +11,8 @@ Page({
     images: [],
     col1: [],
     col2: [],
-    page: 1
+    page: 1,
+    catalogid :1
   },
 
   onLoad: function(options) {
@@ -24,10 +25,11 @@ Page({
 
         this.setData({
           scrollH: scrollH,
-          imgWidth: imgWidth
+          imgWidth: imgWidth,
+          catalogid : options.catalogid
         });
-
-        this.loadImages(options.catalogid);
+        isDetailsCanLoad = true;
+        this.loadImages();
       }
     })
   },
@@ -37,6 +39,20 @@ Page({
   onUnload: function() {
     imageUrl = [];
   },
+  /**
+  * 生命周期函数--监听页面隐藏
+  */
+  onHide: function () {
+      isDetailsCanLoad: true;
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+      isDetailsCanLoad: true;
+  },
+
   onImageLoad: function(e) {
     let imageId = e.currentTarget.id;
     let oImgW = e.detail.width; //图片原始宽度
@@ -78,20 +94,20 @@ Page({
 
     if (!loadingCount) {
       data.images = [];
-      if (!isCanLoad)
-        isCanLoad = true;
+      if (!isDetailsCanLoad)
+        isDetailsCanLoad = true;
     }
     this.setData(data);
   },
 
-  loadImages: function(catalogid) {
+  loadImages: function() {
     var that = this;
     util.showToast("拼命加载中...", "loading");
-    if (!isCanLoad) return;
-    isCanLoad = false;
+    if (!isDetailsCanLoad) return;
+    isDetailsCanLoad = false;
     wx.request({
       method: "POST",
-      url: "https://54188.xyz/api/imagespiderapi/getimage?catalogId=" + catalogid + "&page=" + this.data.page + "&count=10",
+      url: "https://54188.xyz/api/imagespiderapi/getimage?catalogId=" + that.data.catalogid + "&page=" + this.data.page,
       success: function(res) {
         if (res.data.length > 0) {
           let tempImages = that.data.images;
@@ -103,10 +119,12 @@ Page({
           });
           wx.hideToast();
         } else {
+          isDetailsCanLoad = true;
           util.showToast("暂无更多!", "none");
         }
       },
-      fail: function(res) {
+      fail: function (res) {
+        isDetailsCanLoad = true;
         util.showToast("加载失败!", "none");
       }
     });

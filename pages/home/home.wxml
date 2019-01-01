@@ -19,9 +19,20 @@
 
 <template name="imageTemplate">
   <view class="template">
-    <image class="template_image" src="{{item.CoverUrl}}" data-catalogid="{{item.Id}}" data-src="{{item.CoverUrl}}" style="width:100%;height:{{item.height}}px" bindtap='toDetails'></image>
+    <image mode="aspectFill" class="template_image" src="{{item.CoverUrl}}" data-catalogid="{{item.Id}}" data-src="{{item.CoverUrl}}" style="width:100%;height:{{item.height}}px" bindtap='toDetails'></image>
     <view class="template_describe">
-     {{item.Describe}}
+      <text class="describe_text">{{item.Describe}}</text>
+    </view>
+    <view class='icon-out'>
+      <view class='browse-view'>
+        <image class="browse" src="http://54188.xyz/Resources/浏览.png"></image>
+        <text>{{item.BrowseCount}}</text>
+      </view>
+      <view class='collection-view' data-imgObj="{{item}}" bindtap='toCollection'>
+        <image wx:if="{{item.IsCollection}}" class="collection" src="http://54188.xyz/Resources/收藏1.png"></image>
+         <image wx:else="{{item.IsCollection}}" class="collection" src="http://54188.xyz/Resources/收藏.png"></image>
+        <text>{{item.CollectionCount}}</text>
+      </view>
     </view>
   </view>
 </template>

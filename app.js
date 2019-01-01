@@ -1,4 +1,5 @@
 //app.js
+var util = require('/utils/util.js');
 App({
   onLaunch: function () {
     // 展示本地存储能力
@@ -27,81 +28,9 @@ App({
                     },
                     method: 'GET',
                     success: function (res) {
-                      console.log(res);
-                      // if (res.data.Code == 0) {
-                      //   //console.log(res.data.Data);
-                      //   app.globalData.userInfo = res.data.Data
-                      //   console.log(app.globalData.userInfo)
-                      //   //wx.setStorageSync("SessionKey", app.globalData.userInfo.sessionKey)
-                      //   wx.request({
-                      //     url: app.globalData.apiUrl + 'Account/ExistsAccount',
-                      //     data: {
-                      //       identifier: res.data.Data.openId
-                      //     },
-                      //     method: 'GET',
-                      //     success: function (resExists) {
-                      //       if (resExists.data.Code == 0) {
-                      //         if (resExists.data.Count <= 0) {
-                      //           console.log("还未注册")
-                      //           //开始注册
-                      //           wx.request({
-                      //             url: app.globalData.apiUrl + 'Account/WXRegister',
-                      //             data: {
-                      //               "Account_Id": 0,
-                      //               "Identifier": res.data.Data.openId,
-                      //               "RealName": "",
-                      //               "NickName": res.data.Data.nickName,
-                      //               "Avatar": res.data.Data.avatarUrl,
-                      //               "Gender": res.data.Data.gender,
-                      //               "Birthday": "1990-1-1",
-                      //               "Email": "",
-                      //               "Phone": "",
-                      //               "DataFlag": 1,
-                      //               "PassWord": "123456",
-                      //               "Province": "",
-                      //               "City": res.data.Data.city,
-                      //               "CountyArea": res.data.Data.country,
-                      //               "AreaInfomation_Id": 0,
-                      //               "DetailAddress": "",
-                      //               "Contact": "",
-                      //               "ContactNumber": "",
-                      //               "UpdateTime": "2018-07-09",
-                      //               "MailBind": 0,
-                      //               "PhoneBind": 0,
-                      //               "AuthType": 3,
-                      //               "RegisterIP": "192.168.1.1",
-                      //               "CheckCode": "",
-                      //               "CityCode": "",
-                      //               "CityName": res.data.Data.city,
-                      //               "Longitude": "",
-                      //               "Latitude": "",
-                      //               "CityLongitude": "",
-                      //               "CityLatitude": ""
-                      //             },
-                      //             method: 'POST',
-                      //             header: {
-                      //               'content-type': 'application/x-www-form-urlencoded'
-                      //             },
-                      //             success: function (resRegister) {
-                      //               if (resRegister.data.Code == 0) {
-                      //                 console.log(resRegister)
-                      //                 // console.log("获取到的openid为：" + res.data)
-                      //                 // that.globalData.openid = res.data
-                      //                 //wx.setStorageSync('openid', res.data)
-                      //               } else {
-                      //                 console.log(res.errMsg)
-                      //               }
-                      //             },
-                      //           })
-                      //         } else {
-                      //           console.log("已经注册")
-                      //         }
-                      //       }
-                      //     }
-                      //   })
-                      // } else {
-                      //   //console.log(res)
-                      // }
+                      try {
+                        wx.setStorageSync('AccountId', res.data.AccountId)
+                      } catch (e) { util.showToast("登陆异常!", "loading"); }
                     },
                   })
                 }

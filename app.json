@@ -2,8 +2,8 @@
   "pages": [
     "pages/home/home",
     "pages/details/details",
-    "pages/classify/classify",
-    "pages/personal/personal"   
+    "pages/messageboard/messageboard",
+    "pages/personal/personal"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -20,10 +20,10 @@
         "selectedIconPath": "pages/images/首页1.png"
       },
       {
-        "pagePath": "pages/classify/classify",
-        "text": "分类",
-        "iconPath": "pages/images/分类.png",
-        "selectedIconPath": "pages/images/分类1.png"
+        "pagePath": "pages/messageboard/messageboard",
+        "text": "留言版",
+        "iconPath": "pages/images/留言.png",
+        "selectedIconPath": "pages/images/留言1.png"
       },
       {
         "pagePath": "pages/personal/personal",

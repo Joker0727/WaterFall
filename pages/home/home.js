@@ -2,6 +2,9 @@ var util = require('../../utils/util.js');
 let col1H = 0;
 let col2H = 0;
 let isCanLoad = true;
+let openId = "";
+let accountId = 0;
+
 Page({
   data: {
     scrollH: 0,
@@ -25,12 +28,25 @@ Page({
           scrollH: scrollH,
           imgWidth: imgWidth
         });
-
+        isCanLoad: true;
         this.loadImages();
       }
-    })
+    });
+    this.gettingCache();
+  },
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function() {
+    isCanLoad: true;
   },
 
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function() {
+    isCanLoad: true;
+  },
   onImageLoad: function(e) {
     let imageId = e.currentTarget.id;
     let oImgW = e.detail.width; //图片原始宽度
@@ -84,7 +100,7 @@ Page({
     isCanLoad = false;
     wx.request({
       method: "POST",
-      url: "https://54188.xyz/api/imagespiderapi/getcatalog?page=" + this.data.page + "&count=10",
+      url: "https://54188.xyz/api/imagespiderapi/getcatalog?accId=2&page=" + this.data.page,
       success: function(res) {
         if (res.data.length > 0) {
           let tempImages = that.data.images;
@@ -96,10 +112,12 @@ Page({
           });
           wx.hideToast();
         } else {
+          isCanLoad = true;
           util.showToast("暂无更多!", "none");
         }
       },
       fail: function(res) {
+        isCanLoad = true;
         util.showToast("加载失败!", "none");
       }
     });
@@ -109,9 +127,63 @@ Page({
     let catalogid = e.currentTarget.dataset.catalogid;
     let imgUrl = e.currentTarget.dataset.src;
     util.showLoading("玩命加载中...");
+    wx.request({
+      method: "GET",
+      url: "https://54188.xyz/api/account/addbrowse?accountId=" + accountId + "&catalogId=" + catalogid,
+      success: function (res) {
+        console.log(res);
+      },
+      fail: function (res) {
+        console.log(res);
+      }
+    });
     wx.navigateTo({
       url: "../details/details?catalogid=" + catalogid + ""
     });
     wx.hideLoading();
+  },
+
+  toCollection: function(e) {
+    let imgObj = e.currentTarget.dataset.imgobj;
+    let catalogid = imgObj.Id;
+    let iscollection = imgObj.IsCollection;
+    if (!iscollection) {
+      wx.request({
+        method: "GET",
+        url: "https://54188.xyz/api/account/addcollectionrecord?accountId=" + accountId + "&catalogId=" + catalogid,
+        success: function(res) {
+          imgObj.IsCollection = true;
+          util.showToast("收藏成功!");
+        },
+        fail: function(res) {
+          util.showToast("添加收藏失败!", "none");
+        }
+      });
+    } else {
+      wx.request({
+        method: "GET",
+        url: "https://54188.xyz/api/account/deletecollectionrecord?accountId=" + accountId + "&catalogId=" + catalogid,
+        success: function(res) {
+          imgObj.IsCollection = false;
+          util.showToast("取消收藏成功!");
+        },
+        fail: function(res) {
+          util.showToast("取消收藏失败!", "none");
+        }
+      });
+    }
+  },
+
+  gettingCache: function() {
+
+    try {
+      const value = wx.getStorageSync('AccountId')
+      if (value) {
+        accountId = value;
+      }
+    } catch (e) {
+      util.showToast("请稍后操作!", "loading");
+    }
   }
+
 })
