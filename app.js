@@ -30,6 +30,9 @@ App({
                       }
                       util.toSetStorageSync("AccountId", res.data.AccountId);
                     },
+                    fail:function(e){
+                      util.showToast("登陆失败!", "none", 800);
+                    }
                   })
                 }
               })
