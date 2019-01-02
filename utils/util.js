@@ -14,14 +14,14 @@ const formatNumber = n => {
   return n[1] ? n : '0' + n
 }
 
-const showLoading=(text="正在加载...")=>{
+const showLoading = (text = "正在加载...") => {
   wx.showLoading({
     title: text,
     mask: true
   })
 }
 
-const showToast = (text, ic ="success",time=2000) => {
+const showToast = (text, ic = "success", time = 2000) => {
   wx.showToast({
     title: text,
     icon: ic,
@@ -43,9 +43,43 @@ const showModal = (text) => {
   });
 }
 
+const toSetStorageSync = (key, value) => {
+  try {
+    wx.setStorageSync(key, value)
+  } catch (e) {
+    console.log(e);
+    // util.showToast("请稍后操作!", "loading");
+  }
+}
+
+const toGetStorageSync = (key) => {
+  let accountId = "";
+  try {
+    const value = wx.getStorageSync(key)
+    if (value) {
+      accountId = value;
+    }
+    return accountId;
+  } catch (e) {
+    console.log(e);
+    // util.showToast("请稍后操作!", "loading");
+  }
+}
+
+const toRemoveStorageSync = (key) => {
+  try {
+    wx.removeStorageSync(key)
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 module.exports = {
   formatTime: formatTime,
   showLoading: showLoading,
   showToast: showToast,
-  showModal: showModal
+  showModal: showModal,
+  toSetStorageSync: toSetStorageSync,
+  toGetStorageSync: toGetStorageSync,
+  toRemoveStorageSync: toRemoveStorageSync
 }

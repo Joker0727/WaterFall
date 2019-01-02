@@ -19,6 +19,9 @@ Page({
   onLoad: function() {
     wx.getSystemInfo({
       success: (res) => {
+        if (res.system.indexOf("iOS") != -1){
+          util.showModal("iPhone，只允许看，不允许你收藏，还不快换国产机！！！");
+        }
         let ww = res.windowWidth;
         let wh = res.windowHeight;
         let imgWidth = ww * 0.48;
@@ -29,10 +32,10 @@ Page({
           imgWidth: imgWidth
         });
         isCanLoad: true;
-        this.loadImages();
       }
     });
-    this.gettingCache();
+    accountId = util.toGetStorageSync("AccountId");
+    this.loadImages();
   },
   /**
    * 生命周期函数--监听页面隐藏
@@ -100,7 +103,7 @@ Page({
     isCanLoad = false;
     wx.request({
       method: "POST",
-      url: "https://54188.xyz/api/imagespiderapi/getcatalog?accId=2&page=" + this.data.page,
+      url: "https://54188.xyz/api/imagespiderapi/getcatalog?accId=" + accountId+"&page=" + this.data.page,
       success: function(res) {
         if (res.data.length > 0) {
           let tempImages = that.data.images;
@@ -113,12 +116,12 @@ Page({
           wx.hideToast();
         } else {
           isCanLoad = true;
-          util.showToast("暂无更多!", "none");
+          util.showToast("暂无更多!", "none", 800);
         }
       },
       fail: function(res) {
         isCanLoad = true;
-        util.showToast("加载失败!", "none");
+        util.showToast("加载失败!", "none", 800);
       }
     });
   },
@@ -127,20 +130,20 @@ Page({
     let catalogid = e.currentTarget.dataset.catalogid;
     let imgUrl = e.currentTarget.dataset.src;
     util.showLoading("玩命加载中...");
-    wx.request({
-      method: "GET",
-      url: "https://54188.xyz/api/account/addbrowse?accountId=" + accountId + "&catalogId=" + catalogid,
-      success: function (res) {
-        console.log(res);
-      },
-      fail: function (res) {
-        console.log(res);
-      }
-    });
     wx.navigateTo({
       url: "../details/details?catalogid=" + catalogid + ""
     });
     wx.hideLoading();
+    wx.request({
+      method: "GET",
+      url: "https://54188.xyz/api/account/addbrowse?accountId=" + accountId + "&catalogId=" + catalogid,
+      success: function(res) {
+        // console.log(res); 
+      },
+      fail: function(res) {
+        console.log(res);
+      }
+    }); 
   },
 
   toCollection: function(e) {
@@ -152,11 +155,10 @@ Page({
         method: "GET",
         url: "https://54188.xyz/api/account/addcollectionrecord?accountId=" + accountId + "&catalogId=" + catalogid,
         success: function(res) {
-          imgObj.IsCollection = true;
-          util.showToast("收藏成功!");
+          util.showToast("收藏成功!", "success", 800);
         },
         fail: function(res) {
-          util.showToast("添加收藏失败!", "none");
+          util.showToast("添加收藏失败!", "none", 800);
         }
       });
     } else {
@@ -164,26 +166,50 @@ Page({
         method: "GET",
         url: "https://54188.xyz/api/account/deletecollectionrecord?accountId=" + accountId + "&catalogId=" + catalogid,
         success: function(res) {
-          imgObj.IsCollection = false;
-          util.showToast("取消收藏成功!");
+          util.showToast("取消收藏成功!", "success", 800);
         },
         fail: function(res) {
-          util.showToast("取消收藏失败!", "none");
+          util.showToast("取消收藏失败!", "none", 800);
         }
       });
     }
+    this.updateCollectionState(e);
   },
 
-  gettingCache: function() {
-
-    try {
-      const value = wx.getStorageSync('AccountId')
-      if (value) {
-        accountId = value;
+  updateCollectionState: function(e) {
+    let imgObj = e.currentTarget.dataset.imgobj;
+    let catalogid = imgObj.Id;
+    let left = e.detail.x;
+    let that = this;
+    if (left < that.data.imgWidth) {
+      for (let i = 0; 0 < that.data.col1.length; i++) {
+        if (that.data.col1[i].Id == catalogid) {
+          that.data.col1[i].IsCollection = !that.data.col1[i].IsCollection;
+          if (that.data.col1[i].IsCollection)
+            that.data.col1[i].CollectionCount += 1;
+          else
+            that.data.col1[i].CollectionCount -= 1;
+          this.setData({
+            col1: that.data.col1
+          });
+          break;
+        }
       }
-    } catch (e) {
-      util.showToast("请稍后操作!", "loading");
+    } else {
+      for (let i = 0; 0 < that.data.col2.length; i++) {
+        if (that.data.col2[i].Id == catalogid) {
+          that.data.col2[i].IsCollection = !that.data.col2[i].IsCollection;
+          if (that.data.col2[i].IsCollection)
+            that.data.col2[i].CollectionCount += 1;
+          else
+            that.data.col2[i].CollectionCount -= 1;
+          this.setData({
+            col2: that.data.col2
+          });
+          break;
+        }
+      }
     }
-  }
+  },
 
 })

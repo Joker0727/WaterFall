@@ -28,9 +28,7 @@ App({
                     },
                     method: 'GET',
                     success: function (res) {
-                      try {
-                        wx.setStorageSync('AccountId', res.data.AccountId)
-                      } catch (e) { util.showToast("登陆异常!", "loading"); }
+                      util.toSetStorageSync("AccountId", res.data.AccountId);
                     },
                   })
                 }
